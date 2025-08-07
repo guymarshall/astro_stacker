@@ -60,8 +60,8 @@ impl eframe::App for AstroStackerApp {
                     println!("  {}", flat_dark.display());
                 }
                 println!("Biases:");
-                for biase in &self.biases {
-                    println!("  {}", biase.display());
+                for bias in &self.biases {
+                    println!("  {}", bias.display());
                 }
             }
         });
