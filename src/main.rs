@@ -1,6 +1,6 @@
 use eframe::{
     CreationContext, NativeOptions,
-    egui::{self, Context, Ui},
+    egui::{self, Context, RichText, Ui, Vec2},
     run_native,
 };
 use rfd::FileDialog;
@@ -18,12 +18,27 @@ struct AstroStackerApp {
 impl eframe::App for AstroStackerApp {
     fn update(&mut self, ctx: &Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui: &mut Ui| {
-            ui.heading("FITS Stacker File Selector");
+            ui.heading(
+                RichText::new("📷 FITS Stacker File Selector")
+                    .size(24.0)
+                    .strong(),
+            );
+            ui.add_space(10.0);
+
+            let button_size: Vec2 = egui::vec2(ui.available_width() * 0.5, 32.0);
 
             let mut pick_files = |label: &str, files: &mut Vec<PathBuf>| {
                 ui.horizontal(|ui: &mut Ui| {
                     ui.label(format!("{} ({} files)", label, files.len()));
-                    if ui.button(format!("Select {label}")).clicked() {
+                    if ui
+                        .add_sized(
+                            button_size,
+                            egui::Button::new(
+                                RichText::new(format!("Select {label}")).size(16.0).strong(),
+                            ),
+                        )
+                        .clicked()
+                    {
                         if let Some(paths) = FileDialog::new()
                             .set_title(format!("Select {label} files"))
                             .pick_files()
@@ -32,6 +47,7 @@ impl eframe::App for AstroStackerApp {
                         }
                     }
                 });
+                ui.add_space(5.0);
             };
 
             pick_files("Lights", &mut self.lights);
@@ -41,8 +57,19 @@ impl eframe::App for AstroStackerApp {
             pick_files("Biases", &mut self.biases);
 
             ui.separator();
+            ui.add_space(10.0);
 
-            if ui.button("Print Selected Files to Console").clicked() {
+            if ui
+                .add_sized(
+                    egui::vec2(ui.available_width(), 40.0),
+                    egui::Button::new(
+                        RichText::new("📤 Print Selected Files to Console")
+                            .size(18.0)
+                            .strong(),
+                    ),
+                )
+                .clicked()
+            {
                 println!("Lights:");
                 for light in &self.lights {
                     println!("  {}", light.display());
